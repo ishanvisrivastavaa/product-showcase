@@ -22,7 +22,11 @@ interface RadioOptionProps {
   onSelect: () => void;
 }
 
-export const RadioOption = ({ label, selected, onSelect }: RadioOptionProps) => (
+export const RadioOption = ({
+  label,
+  selected,
+  onSelect,
+}: RadioOptionProps) => (
   <Button
     variant="ghost"
     role="radio"
@@ -44,7 +48,9 @@ export const RadioOption = ({ label, selected, onSelect }: RadioOptionProps) => 
           : "border-slate-300 group-hover:border-slate-400",
       )}
     >
-      {selected ? <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" /> : null}
+      {selected ? (
+        <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
+      ) : null}
     </span>
     <span className="truncate">{label}</span>
   </Button>

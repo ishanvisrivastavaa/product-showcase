@@ -11,7 +11,9 @@ describe("RadioGroup / RadioOption", () => {
       </RadioGroup>,
     );
 
-    expect(screen.getByRole("radiogroup", { name: "Category" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("radiogroup", { name: "Category" }),
+    ).toBeInTheDocument();
   });
 
   it("marks the selected option as checked and others as unchecked", () => {

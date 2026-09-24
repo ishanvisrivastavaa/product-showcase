@@ -16,8 +16,18 @@ describe("ActiveFilters", () => {
     render(
       <ActiveFilters
         filters={[
-          { key: "search", label: "Search", value: "phone", onRemove: jest.fn() },
-          { key: "sort", label: "Sort", value: "Price: Low to High", onRemove: jest.fn() },
+          {
+            key: "search",
+            label: "Search",
+            value: "phone",
+            onRemove: jest.fn(),
+          },
+          {
+            key: "sort",
+            label: "Sort",
+            value: "Price: Low to High",
+            onRemove: jest.fn(),
+          },
         ]}
         onClearAll={jest.fn()}
       />,
@@ -33,13 +43,20 @@ describe("ActiveFilters", () => {
     render(
       <ActiveFilters
         filters={[
-          { key: "search", label: "Search", value: "phone", onRemove: onRemoveSearch },
+          {
+            key: "search",
+            label: "Search",
+            value: "phone",
+            onRemove: onRemoveSearch,
+          },
         ]}
         onClearAll={jest.fn()}
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Remove search filter" }));
+    await user.click(
+      screen.getByRole("button", { name: "Remove search filter" }),
+    );
 
     expect(onRemoveSearch).toHaveBeenCalledTimes(1);
   });
@@ -50,7 +67,12 @@ describe("ActiveFilters", () => {
     render(
       <ActiveFilters
         filters={[
-          { key: "search", label: "Search", value: "phone", onRemove: jest.fn() },
+          {
+            key: "search",
+            label: "Search",
+            value: "phone",
+            onRemove: jest.fn(),
+          },
         ]}
         onClearAll={onClearAll}
       />,

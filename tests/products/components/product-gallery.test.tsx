@@ -13,10 +13,13 @@ describe("ProductGallery", () => {
       />,
     );
 
+    expect(screen.getByAltText("Wireless Mouse - image 1")).toHaveAttribute(
+      "src",
+      expect.stringContaining("fallback.jpg"),
+    );
     expect(
-      screen.getByAltText("Wireless Mouse - image 1"),
-    ).toHaveAttribute("src", expect.stringContaining("fallback.jpg"));
-    expect(screen.queryByRole("button", { name: "Next image" })).not.toBeInTheDocument();
+      screen.queryByRole("button", { name: "Next image" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows navigation controls and a counter when there are multiple images", () => {
@@ -29,7 +32,9 @@ describe("ProductGallery", () => {
     );
 
     expect(screen.getByText("1 / 2")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Next image" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Next image" }),
+    ).toBeInTheDocument();
   });
 
   it("moves to the next image when the next arrow is clicked", async () => {

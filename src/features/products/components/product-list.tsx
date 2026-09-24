@@ -13,6 +13,7 @@ import {
   useSearchProducts,
 } from "@/hooks";
 import { PRODUCT_PAGE_SIZE } from "@/constants";
+import { formatPrice } from "@/lib/format/number";
 import { formatSlug } from "@/lib/format/text";
 
 import { DEFAULT_SORT, getSortOption } from "../constants/sort-options";
@@ -23,6 +24,16 @@ import { FilterSidebar } from "./filter-sidebar";
 import { Pagination } from "./pagination";
 import { ProductGrid } from "./product-grid";
 import { ProductListHeader } from "./product-list-header";
+
+const toPriceInput = (value: number | null) =>
+  value === null ? "" : String(value);
+
+const toPriceValue = (value: string): number | null => {
+  const trimmed = value.trim();
+  if (trimmed === "") return null;
+  const price = Number(trimmed);
+  return Number.isFinite(price) && price >= 0 ? price : null;
+};
 
 export const ProductList = () => {
   const { filters, setFilters } = useProductFilters();
@@ -37,6 +48,27 @@ export const ProductList = () => {
   }
   const debouncedSearch = useDebounce(searchInput.trim(), 400);
 
+  const [minPriceInput, setMinPriceInput] = useState(
+    toPriceInput(filters.minPrice),
+  );
+  const [maxPriceInput, setMaxPriceInput] = useState(
+    toPriceInput(filters.maxPrice),
+  );
+  const [syncedPrice, setSyncedPrice] = useState({
+    min: filters.minPrice,
+    max: filters.maxPrice,
+  });
+  if (
+    filters.minPrice !== syncedPrice.min ||
+    filters.maxPrice !== syncedPrice.max
+  ) {
+    setSyncedPrice({ min: filters.minPrice, max: filters.maxPrice });
+    setMinPriceInput(toPriceInput(filters.minPrice));
+    setMaxPriceInput(toPriceInput(filters.maxPrice));
+  }
+  const debouncedMinPrice = useDebounce(minPriceInput.trim(), 400);
+  const debouncedMaxPrice = useDebounce(maxPriceInput.trim(), 400);
+
   useEffect(() => {
     const settled = debouncedSearch === searchInput.trim();
     if (!settled || debouncedSearch === filters.search) return;
@@ -45,6 +77,27 @@ export const ProductList = () => {
       ...(debouncedSearch ? { category: "" } : {}),
     });
   }, [debouncedSearch, searchInput, filters.search, setFilters]);
+
+  useEffect(() => {
+    const settled =
+      debouncedMinPrice === minPriceInput.trim() &&
+      debouncedMaxPrice === maxPriceInput.trim();
+    if (!settled) return;
+
+    const minPrice = toPriceValue(debouncedMinPrice);
+    const maxPrice = toPriceValue(debouncedMaxPrice);
+    if (minPrice === filters.minPrice && maxPrice === filters.maxPrice) return;
+
+    setFilters({ minPrice, maxPrice });
+  }, [
+    debouncedMinPrice,
+    debouncedMaxPrice,
+    minPriceInput,
+    maxPriceInput,
+    filters.minPrice,
+    filters.maxPrice,
+    setFilters,
+  ]);
 
   const sortOption = getSortOption(filters.sort);
   const skip = (filters.page - 1) * PRODUCT_PAGE_SIZE;
@@ -77,7 +130,24 @@ export const ProductList = () => {
       ? categoryQuery
       : listQuery;
 
-  const products = activeQuery.data?.products ?? [];
+  const fetchedProducts = useMemo(
+    () => activeQuery.data?.products ?? [],
+    [activeQuery.data],
+  );
+  const priceEnabled = filters.minPrice !== null || filters.maxPrice !== null;
+  const products = useMemo(
+    () =>
+      priceEnabled
+        ? fetchedProducts.filter(
+            (product) =>
+              (filters.minPrice === null ||
+                product.price >= filters.minPrice) &&
+              (filters.maxPrice === null || product.price <= filters.maxPrice),
+          )
+        : fetchedProducts,
+    [fetchedProducts, priceEnabled, filters.minPrice, filters.maxPrice],
+  );
+
   const total = activeQuery.data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PRODUCT_PAGE_SIZE));
 
@@ -90,10 +160,33 @@ export const ProductList = () => {
     setFilters({ category, search: "" });
   };
 
+  const clearPrice = () => {
+    setMinPriceInput("");
+    setMaxPriceInput("");
+    setFilters({ minPrice: null, maxPrice: null });
+  };
+
   const clearAll = () => {
     setSearchInput("");
-    setFilters({ search: "", category: "", sort: DEFAULT_SORT });
+    setMinPriceInput("");
+    setMaxPriceInput("");
+    setFilters({
+      search: "",
+      category: "",
+      sort: DEFAULT_SORT,
+      minPrice: null,
+      maxPrice: null,
+    });
   };
+
+  const priceLabel =
+    filters.minPrice !== null && filters.maxPrice !== null
+      ? `${formatPrice(filters.minPrice)} – ${formatPrice(filters.maxPrice)}`
+      : filters.minPrice !== null
+        ? `From ${formatPrice(filters.minPrice)}`
+        : filters.maxPrice !== null
+          ? `Up to ${formatPrice(filters.maxPrice)}`
+          : "";
 
   const activeFilters: ActiveFilter[] = [];
   if (filters.search) {
@@ -112,6 +205,14 @@ export const ProductList = () => {
       onRemove: () => setFilters({ category: "" }),
     });
   }
+  if (priceEnabled) {
+    activeFilters.push({
+      key: "price",
+      label: "Price",
+      value: priceLabel,
+      onRemove: clearPrice,
+    });
+  }
   if (filters.sort !== DEFAULT_SORT) {
     activeFilters.push({
       key: "sort",
@@ -127,12 +228,13 @@ export const ProductList = () => {
       ? categoryName
       : "All products";
 
-  const resultLabel =
-    activeQuery.isSuccess && total > 0
-      ? `Showing ${skip + 1}–${Math.min(skip + products.length, total)} of ${total} products`
-      : activeQuery.isPending
-        ? "Loading products…"
-        : "No products";
+  const resultLabel = activeQuery.isPending
+    ? "Loading products…"
+    : !activeQuery.isSuccess || total === 0
+      ? "No products"
+      : priceEnabled
+        ? `Showing ${products.length} of ${fetchedProducts.length} products in this price range`
+        : `Showing ${skip + 1}–${Math.min(skip + products.length, total)} of ${total} products`;
 
   const filterSidebarProps = {
     search: searchInput,
@@ -141,6 +243,10 @@ export const ProductList = () => {
     onCategoryChange: handleCategoryChange,
     sort: filters.sort,
     onSortChange: (sort: string) => setFilters({ sort }),
+    minPrice: minPriceInput,
+    onMinPriceChange: setMinPriceInput,
+    maxPrice: maxPriceInput,
+    onMaxPriceChange: setMaxPriceInput,
     categories,
     categoriesLoading,
   };
@@ -168,7 +274,7 @@ export const ProductList = () => {
             errorMessage={activeQuery.error?.message}
             onRetry={activeQuery.refetch}
             emptyTitle="No products found"
-            emptyDescription="Try a different search term or browse another category."
+            emptyDescription="Try a different search term, price range, or browse another category."
             emptyAction={
               activeFilters.length > 0 ? (
                 <Button variant="secondary" onClick={clearAll}>

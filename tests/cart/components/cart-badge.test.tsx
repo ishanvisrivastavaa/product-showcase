@@ -32,7 +32,9 @@ describe("CartBadge", () => {
     render(<CartBadge />);
 
     expect(screen.getByText("5")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Cart, 5 items" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Cart, 5 items" }),
+    ).toBeInTheDocument();
   });
 
   it("uses the singular label for exactly one item", () => {
@@ -44,13 +46,22 @@ describe("CartBadge", () => {
 
     render(<CartBadge />);
 
-    expect(screen.getByRole("link", { name: "Cart, 1 item" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Cart, 1 item" }),
+    ).toBeInTheDocument();
   });
 
   it("caps the displayed count at 99+", () => {
     useCartStore.setState({
       items: [
-        { id: 1, title: "A", thumbnail: "", price: 10, stock: 500, quantity: 150 },
+        {
+          id: 1,
+          title: "A",
+          thumbnail: "",
+          price: 10,
+          stock: 500,
+          quantity: 150,
+        },
       ],
     });
 

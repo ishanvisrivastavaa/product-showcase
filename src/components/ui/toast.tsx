@@ -43,7 +43,7 @@ export const Toaster = () => {
         <div
           key={toast.id}
           role="status"
-          className="pointer-events-auto flex max-w-sm items-center gap-3 rounded-xl bg-slate-900 py-3 pl-4 pr-2 text-sm text-white shadow-xl"
+          className="pointer-events-auto flex max-w-sm items-center gap-3 rounded-xl bg-slate-900 py-3 pr-2 pl-4 text-sm text-white shadow-xl"
         >
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
             <CheckIcon className="h-3.5 w-3.5" />
@@ -53,7 +53,7 @@ export const Toaster = () => {
             <Link
               href={toast.link.href}
               onClick={hideToast}
-              className="shrink-0 rounded font-semibold text-indigo-300 hover:text-indigo-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+              className="shrink-0 rounded font-semibold text-indigo-300 hover:text-indigo-200 focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:outline-none"
             >
               {toast.link.label}
             </Link>

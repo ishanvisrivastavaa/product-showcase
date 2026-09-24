@@ -58,7 +58,7 @@ export const ProductTabs = ({ product }: ProductTabsProps) => (
                   className="grid grid-cols-[8rem_1fr] gap-4 px-4 py-3 text-sm odd:bg-slate-50"
                 >
                   <dt className="text-slate-500">{label}</dt>
-                  <dd className="break-words font-medium text-slate-900">
+                  <dd className="font-medium break-words text-slate-900">
                     {value}
                   </dd>
                 </div>

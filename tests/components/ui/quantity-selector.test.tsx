@@ -47,7 +47,9 @@ describe("QuantitySelector", () => {
   });
 
   it("respects a custom minimum", () => {
-    render(<QuantitySelector value={2} min={2} onChange={jest.fn()} max={10} />);
+    render(
+      <QuantitySelector value={2} min={2} onChange={jest.fn()} max={10} />,
+    );
 
     expect(
       screen.getByRole("button", { name: "Decrease quantity" }),

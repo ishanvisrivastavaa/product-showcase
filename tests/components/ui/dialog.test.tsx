@@ -11,7 +11,9 @@ describe("Dialog", () => {
       </Dialog>,
     );
 
-    expect(container.querySelector('[aria-hidden="true"]')).not.toBeInTheDocument();
+    expect(
+      container.querySelector('[aria-hidden="true"]'),
+    ).not.toBeInTheDocument();
   });
 
   it("renders a backdrop when open", () => {

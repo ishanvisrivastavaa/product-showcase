@@ -13,7 +13,9 @@ export const Separator = ({
     role="separator"
     aria-orientation={orientation}
     className={cn(
-      orientation === "horizontal" ? "h-px w-full bg-slate-200" : "h-full w-px bg-slate-200",
+      orientation === "horizontal"
+        ? "h-px w-full bg-slate-200"
+        : "h-full w-px bg-slate-200",
       className,
     )}
   />

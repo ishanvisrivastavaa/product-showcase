@@ -1,0 +1,16 @@
+# Build output and caches
+.next/
+out/
+build/
+coverage/
+.swc/
+node_modules/
+*.tsbuildinfo
+
+# Lockfiles and generated types
+package-lock.json
+next-env.d.ts
+
+# Binary / non-formattable assets
+public/
+*.ico

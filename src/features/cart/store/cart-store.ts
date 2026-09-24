@@ -29,7 +29,10 @@ export const useCartStore = create<CartState>()(
                 item.id === product.id
                   ? {
                       ...item,
-                      quantity: clampQuantity(item.quantity + quantity, item.stock),
+                      quantity: clampQuantity(
+                        item.quantity + quantity,
+                        item.stock,
+                      ),
                     }
                   : item,
               ),
@@ -39,7 +42,10 @@ export const useCartStore = create<CartState>()(
             id: product.id,
             title: product.title,
             thumbnail: product.thumbnail,
-            price: getDiscountedPrice(product.price, product.discountPercentage),
+            price: getDiscountedPrice(
+              product.price,
+              product.discountPercentage,
+            ),
             stock: product.stock,
             quantity: clampQuantity(quantity, product.stock),
           };
@@ -73,6 +79,5 @@ export const selectCartCount = (state: CartState) =>
 export const selectCartSubtotal = (state: CartState) =>
   state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-export const selectIsProductInCart =
-  (id: number) => (state: CartState) =>
-    state.items.some((item) => item.id === id);
+export const selectIsProductInCart = (id: number) => (state: CartState) =>
+  state.items.some((item) => item.id === id);

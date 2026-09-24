@@ -7,8 +7,22 @@ import { CartView } from "@/features/cart/components/cart-view";
 const seedCart = () => {
   useCartStore.setState({
     items: [
-      { id: 1, title: "Wireless Mouse", thumbnail: "", price: 20, stock: 5, quantity: 2 },
-      { id: 2, title: "Keyboard", thumbnail: "", price: 50, stock: 3, quantity: 1 },
+      {
+        id: 1,
+        title: "Wireless Mouse",
+        thumbnail: "",
+        price: 20,
+        stock: 5,
+        quantity: 2,
+      },
+      {
+        id: 2,
+        title: "Keyboard",
+        thumbnail: "",
+        price: 50,
+        stock: 3,
+        quantity: 1,
+      },
     ],
   });
 };
@@ -22,10 +36,9 @@ describe("CartView", () => {
     render(<CartView />);
 
     expect(screen.getByText("Your cart is empty")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Browse products" })).toHaveAttribute(
-      "href",
-      "/",
-    );
+    expect(
+      screen.getByRole("link", { name: "Browse products" }),
+    ).toHaveAttribute("href", "/");
   });
 
   it("lists every item in the cart with its line total", () => {

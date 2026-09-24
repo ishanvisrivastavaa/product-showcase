@@ -1,4 +1,8 @@
-import { DEFAULT_SORT, SORT_OPTIONS, getSortOption } from "@/features/products/constants/sort-options";
+import {
+  DEFAULT_SORT,
+  SORT_OPTIONS,
+  getSortOption,
+} from "@/features/products/constants/sort-options";
 
 describe("getSortOption", () => {
   it("returns the matching option for a known value", () => {

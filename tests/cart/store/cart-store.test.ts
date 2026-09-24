@@ -85,7 +85,9 @@ describe("useCartStore", () => {
 
   describe("updateQuantity", () => {
     it("updates the quantity of the matching item", () => {
-      useCartStore.getState().addItem(createMockProduct({ id: 1, stock: 10 }), 1);
+      useCartStore
+        .getState()
+        .addItem(createMockProduct({ id: 1, stock: 10 }), 1);
 
       useCartStore.getState().updateQuantity(1, 4);
 
@@ -93,7 +95,9 @@ describe("useCartStore", () => {
     });
 
     it("clamps the updated quantity to the item's stock", () => {
-      useCartStore.getState().addItem(createMockProduct({ id: 1, stock: 3 }), 1);
+      useCartStore
+        .getState()
+        .addItem(createMockProduct({ id: 1, stock: 3 }), 1);
 
       useCartStore.getState().updateQuantity(1, 99);
 
@@ -101,7 +105,9 @@ describe("useCartStore", () => {
     });
 
     it("never lets the quantity drop below 1", () => {
-      useCartStore.getState().addItem(createMockProduct({ id: 1, stock: 5 }), 2);
+      useCartStore
+        .getState()
+        .addItem(createMockProduct({ id: 1, stock: 5 }), 2);
 
       useCartStore.getState().updateQuantity(1, -3);
 
@@ -156,8 +162,12 @@ describe("useCartStore", () => {
     });
 
     it("sums quantities across every line item", () => {
-      useCartStore.getState().addItem(createMockProduct({ id: 1, stock: 10 }), 2);
-      useCartStore.getState().addItem(createMockProduct({ id: 2, stock: 10 }), 3);
+      useCartStore
+        .getState()
+        .addItem(createMockProduct({ id: 1, stock: 10 }), 2);
+      useCartStore
+        .getState()
+        .addItem(createMockProduct({ id: 2, stock: 10 }), 3);
 
       expect(selectCartCount(useCartStore.getState())).toBe(5);
     });
@@ -169,12 +179,15 @@ describe("useCartStore", () => {
     });
 
     it("sums discounted price times quantity across every line item", () => {
-      useCartStore
-        .getState()
-        .addItem(
-          createMockProduct({ id: 1, price: 100, discountPercentage: 50, stock: 10 }),
-          2,
-        );
+      useCartStore.getState().addItem(
+        createMockProduct({
+          id: 1,
+          price: 100,
+          discountPercentage: 50,
+          stock: 10,
+        }),
+        2,
+      );
       useCartStore
         .getState()
         .addItem(createMockProduct({ id: 2, price: 20, stock: 10 }), 1);

@@ -35,7 +35,7 @@ export const ProductCard = memo(function ProductCard({
     <Card className="group relative flex h-full flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-900/[0.08] has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-indigo-500 has-[a:focus-visible]:ring-offset-2">
       <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-b from-slate-50 to-slate-100">
         {hasDiscount ? (
-          <Badge variant="danger" className="absolute left-3 top-3 z-10">
+          <Badge variant="danger" className="absolute top-3 left-3 z-10">
             -{product.discountPercentage.toFixed(0)}%
           </Badge>
         ) : null}
@@ -54,7 +54,7 @@ export const ProductCard = memo(function ProductCard({
           {product.brand || formatSlug(product.category)}
         </Badge>
 
-        <h3 className="line-clamp-2 min-h-[2.75rem] text-base font-semibold leading-snug text-slate-900 transition-colors group-hover:text-indigo-600">
+        <h3 className="line-clamp-2 min-h-[2.75rem] text-base leading-snug font-semibold text-slate-900 transition-colors group-hover:text-indigo-600">
           <Link
             href={`/product/${product.id}`}
             className="after:absolute after:inset-0 focus-visible:outline-none"
@@ -92,7 +92,11 @@ export const ProductCard = memo(function ProductCard({
               </span>
             ) : null}
           </div>
-          <AddToCartButton product={product} compact className="relative z-10" />
+          <AddToCartButton
+            product={product}
+            compact
+            className="relative z-10"
+          />
         </div>
       </div>
     </Card>

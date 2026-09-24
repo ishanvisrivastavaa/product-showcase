@@ -16,8 +16,16 @@ export const AddToCart = ({ product }: AddToCartProps) => {
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
-      <QuantitySelector value={quantity} onChange={setQuantity} max={product.stock} />
-      <AddToCartButton product={product} quantity={quantity} className="flex-1" />
+      <QuantitySelector
+        value={quantity}
+        onChange={setQuantity}
+        max={product.stock}
+      />
+      <AddToCartButton
+        product={product}
+        quantity={quantity}
+        className="flex-1"
+      />
     </div>
   );
 };

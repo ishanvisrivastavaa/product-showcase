@@ -5,7 +5,9 @@ import { SearchInput } from "@/components/ui/search-input";
 
 describe("SearchInput", () => {
   it("renders a search input with the given placeholder", () => {
-    render(<SearchInput placeholder="Search products..." aria-label="Search" />);
+    render(
+      <SearchInput placeholder="Search products..." aria-label="Search" />,
+    );
 
     expect(
       screen.getByPlaceholderText("Search products..."),

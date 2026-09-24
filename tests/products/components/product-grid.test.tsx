@@ -25,9 +25,7 @@ describe("ProductGrid", () => {
   it("shows loading placeholders instead of products while loading", () => {
     const products = [createMockProduct({ id: 1, title: "Wireless Mouse" })];
 
-    render(
-      <ProductGrid products={products} isLoading isError={false} />,
-    );
+    render(<ProductGrid products={products} isLoading isError={false} />);
 
     expect(screen.queryByText("Wireless Mouse")).not.toBeInTheDocument();
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
@@ -67,7 +65,9 @@ describe("ProductGrid", () => {
     );
 
     expect(screen.getByText("No products found")).toBeInTheDocument();
-    expect(screen.getByText("Try a different search term.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Try a different search term."),
+    ).toBeInTheDocument();
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
   });
 

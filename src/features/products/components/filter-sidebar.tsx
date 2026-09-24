@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { ProductCategory } from "@/features/products/types/product.types";
 
 import { SORT_OPTIONS } from "../constants/sort-options";
+import { PriceRangeFilter } from "./price-range-filter";
 
 interface FilterSectionProps {
   title: string;
@@ -18,7 +19,7 @@ interface FilterSectionProps {
 const FilterSection = ({ title, hint, children }: FilterSectionProps) => (
   <section className="flex flex-col gap-3">
     <div>
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
         {title}
       </h3>
       {hint ? <p className="mt-1 text-xs text-slate-400">{hint}</p> : null}
@@ -34,6 +35,10 @@ interface FilterSidebarProps {
   onCategoryChange: (value: string) => void;
   sort: string;
   onSortChange: (value: string) => void;
+  minPrice: string;
+  onMinPriceChange: (value: string) => void;
+  maxPrice: string;
+  onMaxPriceChange: (value: string) => void;
   categories?: ProductCategory[];
   categoriesLoading: boolean;
 }
@@ -45,6 +50,10 @@ export const FilterSidebar = ({
   onCategoryChange,
   sort,
   onSortChange,
+  minPrice,
+  onMinPriceChange,
+  maxPrice,
+  onMaxPriceChange,
   categories,
   categoriesLoading,
 }: FilterSidebarProps) => (
@@ -70,6 +79,17 @@ export const FilterSidebar = ({
         />
       </FilterSection>
     </div>
+
+    <Separator />
+
+    <FilterSection title="Price range" hint="Narrows the products shown.">
+      <PriceRangeFilter
+        min={minPrice}
+        max={maxPrice}
+        onMinChange={onMinPriceChange}
+        onMaxChange={onMaxPriceChange}
+      />
+    </FilterSection>
 
     <Separator />
 

@@ -8,7 +8,7 @@ const NotFoundPage = () => (
     <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
       <SearchXIcon className="h-7 w-7" />
     </span>
-    <p className="text-sm font-semibold uppercase tracking-widest text-indigo-600">
+    <p className="text-sm font-semibold tracking-widest text-indigo-600 uppercase">
       404
     </p>
     <h1 className="text-3xl font-bold text-slate-900">Page not found</h1>

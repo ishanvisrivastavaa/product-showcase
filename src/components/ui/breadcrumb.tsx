@@ -21,18 +21,22 @@ export const Breadcrumb = ({ items, className }: BreadcrumbProps) => (
         return (
           <li
             key={index}
-            className={isLast ? "min-w-0 truncate" : "flex shrink-0 items-center gap-1.5"}
+            className={
+              isLast ? "min-w-0 truncate" : "flex shrink-0 items-center gap-1.5"
+            }
           >
             {item.href && !isLast ? (
               <Link
                 href={item.href}
-                className="rounded transition-colors hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="rounded transition-colors hover:text-indigo-600 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
               >
                 {item.label}
               </Link>
             ) : (
               <span
-                className={isLast ? "truncate font-medium text-slate-900" : undefined}
+                className={
+                  isLast ? "truncate font-medium text-slate-900" : undefined
+                }
                 aria-current={isLast ? "page" : undefined}
               >
                 {item.label}

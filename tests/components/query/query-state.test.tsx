@@ -30,7 +30,12 @@ describe("QueryState", () => {
 
   it("renders the children when none of the states apply", () => {
     render(
-      <QueryState {...props} isLoading={false} isError={false} isEmpty={false} />,
+      <QueryState
+        {...props}
+        isLoading={false}
+        isError={false}
+        isEmpty={false}
+      />,
     );
 
     expect(screen.getByText("Content")).toBeInTheDocument();

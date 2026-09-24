@@ -8,7 +8,7 @@ interface FilterChipProps {
 }
 
 export const FilterChip = ({ label, value, onRemove }: FilterChipProps) => (
-  <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 py-1.5 pl-3 pr-1.5 text-xs font-medium text-indigo-700">
+  <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 py-1.5 pr-1.5 pl-3 text-xs font-medium text-indigo-700">
     <span className="text-indigo-500">{label}:</span>
     <span className="max-w-40 truncate">{value}</span>
     <Button

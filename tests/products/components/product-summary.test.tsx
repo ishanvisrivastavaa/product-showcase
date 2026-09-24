@@ -11,7 +11,9 @@ describe("ProductSummary", () => {
     render(<ProductSummary product={product} categoryName="Electronics" />);
 
     expect(screen.getByText("Electronics")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Wireless Mouse" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Wireless Mouse" }),
+    ).toBeInTheDocument();
   });
 
   it("shows a brand badge when the product has a brand", () => {

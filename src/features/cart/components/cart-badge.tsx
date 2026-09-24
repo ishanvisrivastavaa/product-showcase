@@ -14,14 +14,17 @@ export const CartBadge = () => {
     <Link
       href="/cart"
       aria-label={`Cart, ${count} ${count === 1 ? "item" : "items"}`}
-      className={buttonClasses({ variant: "ghost", className: "relative px-3" })}
+      className={buttonClasses({
+        variant: "ghost",
+        className: "relative px-3",
+      })}
     >
       <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
       <span className="hidden sm:inline">Cart</span>
       {count > 0 ? (
         <span
           aria-hidden="true"
-          className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-indigo-600 px-1.5 text-[11px] font-semibold text-white"
+          className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-indigo-600 px-1.5 text-[11px] font-semibold text-white"
         >
           {count > 99 ? "99+" : count}
         </span>

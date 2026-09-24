@@ -35,24 +35,24 @@ Copy `.env.example` to `.env.local` and adjust if needed:
 cp .env.example .env.local
 ```
 
-| Variable | Required | Default | Description |
-| --- | --- | --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL` | No | `https://dummyjson.com` | Base URL the app fetches product data from. |
+| Variable                   | Required | Default                 | Description                                 |
+| -------------------------- | -------- | ----------------------- | ------------------------------------------- |
+| `NEXT_PUBLIC_API_BASE_URL` | No       | `https://dummyjson.com` | Base URL the app fetches product data from. |
 
 No other environment variables are used. The app runs fine with no `.env.local` file at all, since the default already points at the public DummyJSON API.
 
 ## Commands
 
-| Command | Description |
-| --- | --- |
-| `npm install` | Install dependencies |
-| `npm run dev` | Start the development server (with hot reload) |
-| `npm run build` | Build the app for production |
-| `npm start` | Start the production server (run `npm run build` first) |
-| `npm test` | Run the test suite once |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:coverage` | Run tests and print a coverage report |
-| `npm run lint` | Lint the codebase with ESLint |
+| Command                 | Description                                             |
+| ----------------------- | ------------------------------------------------------- |
+| `npm install`           | Install dependencies                                    |
+| `npm run dev`           | Start the development server (with hot reload)          |
+| `npm run build`         | Build the app for production                            |
+| `npm start`             | Start the production server (run `npm run build` first) |
+| `npm test`              | Run the test suite once                                 |
+| `npm run test:watch`    | Run tests in watch mode                                 |
+| `npm run test:coverage` | Run tests and print a coverage report                   |
+| `npm run lint`          | Lint the codebase with ESLint                           |
 
 ## Project Structure
 
@@ -108,20 +108,20 @@ tests/
 
 ## Libraries and Tools
 
-| Library | Purpose |
-| --- | --- |
-| **Next.js** (App Router) | Framework: routing, layouts, loading/error UI, dynamic imports |
-| **React** | UI library |
-| **TypeScript** | Static typing across the whole codebase |
-| **Tailwind CSS** | Utility-first styling |
-| **TanStack React Query** | Fetching, caching, and re-fetching product data from the API |
-| **Zustand** | Lightweight client state store for the shopping cart, persisted to `localStorage` |
-| **Axios** | HTTP client used by the API layer |
-| **tailwind-merge** | Resolves conflicting Tailwind classes when a component's default classes are overridden via a `className` prop |
-| **Jest** | Test runner |
-| **React Testing Library** | Renders components and queries them the way a user would |
-| **@testing-library/user-event** | Simulates realistic user interactions (typing, clicking, keyboard navigation) in tests |
-| **ESLint** | Linting (Next.js's recommended config) |
+| Library                         | Purpose                                                                                                        |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Next.js** (App Router)        | Framework: routing, layouts, loading/error UI, dynamic imports                                                 |
+| **React**                       | UI library                                                                                                     |
+| **TypeScript**                  | Static typing across the whole codebase                                                                        |
+| **Tailwind CSS**                | Utility-first styling                                                                                          |
+| **TanStack React Query**        | Fetching, caching, and re-fetching product data from the API                                                   |
+| **Zustand**                     | Lightweight client state store for the shopping cart, persisted to `localStorage`                              |
+| **Axios**                       | HTTP client used by the API layer                                                                              |
+| **tailwind-merge**              | Resolves conflicting Tailwind classes when a component's default classes are overridden via a `className` prop |
+| **Jest**                        | Test runner                                                                                                    |
+| **React Testing Library**       | Renders components and queries them the way a user would                                                       |
+| **@testing-library/user-event** | Simulates realistic user interactions (typing, clicking, keyboard navigation) in tests                         |
+| **ESLint**                      | Linting (Next.js's recommended config)                                                                         |
 
 ## Architecture
 
@@ -130,6 +130,7 @@ tests/
 **Feature-based organization.** Each feature under `src/features` (`products`, `cart`) owns its own `components/`, `hooks/`, `types/`, and `utils/` (and, for `cart`, a `store/`), and exposes its public API through a single `index.ts` barrel file. Other code imports from `@/features/products` or `@/features/cart`, not from internal file paths.
 
 **Two kinds of state:**
+
 - **Server state** (product/category data from the API) is managed by **TanStack React Query**. Hooks in `src/hooks/product/use-product.ts` (e.g. `useProducts`, `useProductDetail`, `useSearchProducts`) wrap `useQuery` and call functions from the services layer. Query keys are centralized in `src/lib/query/query-keys.ts` so cache entries stay consistent.
 - **Client state** (the shopping cart) is managed by **Zustand**. The store in `src/features/cart/store/cart-store.ts` holds cart items and exposes actions (`addItem`, `updateQuantity`, `removeItem`, `clearCart`) and selectors (`selectCartCount`, `selectCartSubtotal`, `selectIsProductInCart`). It's persisted to `localStorage` and rehydrated on the client via `StoreHydrator` in `src/providers`.
 
@@ -139,15 +140,15 @@ tests/
 
 ## Where to find things
 
-| Concern | Location |
-| --- | --- |
-| API calls | `src/services/*` (calls `src/lib/api/client.ts`) |
-| Server/remote state (React Query) | `src/hooks/product/use-product.ts` |
-| Client state (cart) | `src/features/cart/store/cart-store.ts` |
-| URL-based filter state | `src/features/products/hooks/use-product-filters.ts` |
-| Shared UI components | `src/components/ui`, `src/components/query`, `src/components/layout` |
-| Feature-specific components | `src/features/products/components`, `src/features/cart/components` |
-| Shared hooks | `src/hooks` |
-| Feature-specific hooks | `src/features/products/hooks`, `src/features/cart/hooks` |
-| Utilities | `src/lib` (generic) and `src/features/*/utils` (feature-specific) |
-| Tests | `tests/` (mirrors `src/`, see [Project Structure](#tests-live-in-a-separate-tests-directory)) |
+| Concern                           | Location                                                                                      |
+| --------------------------------- | --------------------------------------------------------------------------------------------- |
+| API calls                         | `src/services/*` (calls `src/lib/api/client.ts`)                                              |
+| Server/remote state (React Query) | `src/hooks/product/use-product.ts`                                                            |
+| Client state (cart)               | `src/features/cart/store/cart-store.ts`                                                       |
+| URL-based filter state            | `src/features/products/hooks/use-product-filters.ts`                                          |
+| Shared UI components              | `src/components/ui`, `src/components/query`, `src/components/layout`                          |
+| Feature-specific components       | `src/features/products/components`, `src/features/cart/components`                            |
+| Shared hooks                      | `src/hooks`                                                                                   |
+| Feature-specific hooks            | `src/features/products/hooks`, `src/features/cart/hooks`                                      |
+| Utilities                         | `src/lib` (generic) and `src/features/*/utils` (feature-specific)                             |
+| Tests                             | `tests/` (mirrors `src/`, see [Project Structure](#tests-live-in-a-separate-tests-directory)) |

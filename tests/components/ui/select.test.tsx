@@ -20,9 +20,9 @@ describe("Select", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Sort products" })).toHaveTextContent(
-      "Featured",
-    );
+    expect(
+      screen.getByRole("button", { name: "Sort products" }),
+    ).toHaveTextContent("Featured");
   });
 
   it("opens the listbox when the trigger is clicked", async () => {
@@ -55,7 +55,9 @@ describe("Select", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Sort products" }));
-    await user.click(screen.getByRole("option", { name: "Price: Low to High" }));
+    await user.click(
+      screen.getByRole("option", { name: "Price: Low to High" }),
+    );
 
     expect(onValueChange).toHaveBeenCalledWith("price-asc");
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();

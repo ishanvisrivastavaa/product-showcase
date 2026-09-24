@@ -20,6 +20,8 @@ describe("QueryEmpty", () => {
 
     expect(screen.getByText("No products found")).toBeInTheDocument();
     expect(screen.getByText("Try a different search.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Clear filters" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Clear filters" }),
+    ).toBeInTheDocument();
   });
 });

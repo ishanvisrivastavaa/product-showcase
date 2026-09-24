@@ -11,7 +11,8 @@ interface QuantitySelectorProps {
   size?: "sm" | "md";
 }
 
-const stepClasses = "h-full rounded-none text-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900";
+const stepClasses =
+  "h-full rounded-none text-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900";
 
 export const QuantitySelector = ({
   value,

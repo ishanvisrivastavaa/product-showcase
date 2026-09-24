@@ -3,8 +3,7 @@ import dynamic from "next/dynamic";
 import { ProductDetailSkeleton } from "@/features/products/components/product-detail-skeleton";
 
 const ProductDetail = dynamic(
-  () =>
-    import("@/features/products").then((mod) => mod.ProductDetail),
+  () => import("@/features/products").then((mod) => mod.ProductDetail),
   {
     loading: () => <ProductDetailSkeleton />,
   },

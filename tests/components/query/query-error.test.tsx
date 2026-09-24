@@ -12,7 +12,9 @@ describe("QueryError", () => {
   });
 
   it("shows a custom title and message", () => {
-    render(<QueryError title="Failed to load products" message="Network error" />);
+    render(
+      <QueryError title="Failed to load products" message="Network error" />,
+    );
 
     expect(screen.getByText("Failed to load products")).toBeInTheDocument();
     expect(screen.getByText("Network error")).toBeInTheDocument();
@@ -20,10 +22,14 @@ describe("QueryError", () => {
 
   it("only renders the retry button when onRetry is provided", () => {
     const { rerender } = render(<QueryError />);
-    expect(screen.queryByRole("button", { name: "Try again" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Try again" }),
+    ).not.toBeInTheDocument();
 
     rerender(<QueryError onRetry={jest.fn()} />);
-    expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Try again" }),
+    ).toBeInTheDocument();
   });
 
   it("calls onRetry when the retry button is clicked", async () => {

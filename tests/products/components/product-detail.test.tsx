@@ -54,24 +54,39 @@ describe("ProductDetail", () => {
   });
 
   it("renders the product once it has loaded", () => {
-    const product = createMockProduct({ title: "Wireless Mouse", category: "electronics" });
+    const product = createMockProduct({
+      title: "Wireless Mouse",
+      category: "electronics",
+    });
     mockUseProductDetail.mockReturnValue(buildResult({ data: product }));
 
     render(<ProductDetail id="1" />);
 
-    expect(screen.getByRole("heading", { name: "Wireless Mouse" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Wireless Mouse" }),
+    ).toBeInTheDocument();
   });
 
   it("uses the real category name from the category list when available", () => {
     const product = createMockProduct({ category: "electronics" });
     mockUseProductDetail.mockReturnValue(buildResult({ data: product }));
     mockUseProductCategory.mockReturnValue(
-      buildResult({ data: [{ slug: "electronics", name: "Electronics & Gadgets", url: "electronics" }] }),
+      buildResult({
+        data: [
+          {
+            slug: "electronics",
+            name: "Electronics & Gadgets",
+            url: "electronics",
+          },
+        ],
+      }),
     );
 
     render(<ProductDetail id="1" />);
 
-    expect(screen.getAllByText("Electronics & Gadgets").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Electronics & Gadgets").length).toBeGreaterThan(
+      0,
+    );
   });
 
   it("falls back to a formatted slug when the category list has no match", () => {

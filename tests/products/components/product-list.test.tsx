@@ -29,7 +29,14 @@ const mockUseProducts = useProducts as jest.Mock;
 const mockUseProductsByCategory = useProductsByCategory as jest.Mock;
 const mockUseSearchProducts = useSearchProducts as jest.Mock;
 
-const DEFAULT_FILTERS = { search: "", category: "", sort: "featured", page: 1 };
+const DEFAULT_FILTERS = {
+  search: "",
+  category: "",
+  sort: "featured",
+  page: 1,
+  minPrice: null as number | null,
+  maxPrice: null as number | null,
+};
 
 const buildQueryResult = (overrides: Record<string, unknown> = {}) => ({
   data: undefined,
@@ -63,14 +70,19 @@ describe("ProductList", () => {
   it("shows the products returned by useProducts by default", () => {
     mockUseProducts.mockReturnValue(
       buildQueryResult({
-        data: { products: [createMockProduct({ id: 1, title: "Wireless Mouse" })], total: 1 },
+        data: {
+          products: [createMockProduct({ id: 1, title: "Wireless Mouse" })],
+          total: 1,
+        },
         isSuccess: true,
       }),
     );
 
     render(<ProductList />);
 
-    expect(screen.getByRole("heading", { name: "All products" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "All products" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Wireless Mouse")).toBeInTheDocument();
   });
 
@@ -87,7 +99,13 @@ describe("ProductList", () => {
   it("shows an error state and retries the active query", async () => {
     const user = userEvent.setup();
     const refetch = jest.fn();
-    mockUseProducts.mockReturnValue(buildQueryResult({ isError: true, error: { message: "Network error" }, refetch }));
+    mockUseProducts.mockReturnValue(
+      buildQueryResult({
+        isError: true,
+        error: { message: "Network error" },
+        refetch,
+      }),
+    );
 
     render(<ProductList />);
 
@@ -100,25 +118,35 @@ describe("ProductList", () => {
     setupFilters({ search: "phone" });
     mockUseSearchProducts.mockReturnValue(
       buildQueryResult({
-        data: { products: [createMockProduct({ id: 2, title: "Smartphone" })], total: 1 },
+        data: {
+          products: [createMockProduct({ id: 2, title: "Smartphone" })],
+          total: 1,
+        },
         isSuccess: true,
       }),
     );
 
     render(<ProductList />);
 
-    expect(screen.getByRole("heading", { name: "Results for “phone”" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Results for “phone”" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Smartphone")).toBeInTheDocument();
   });
 
   it("switches to the category results when a category filter is active", () => {
     setupFilters({ category: "beauty" });
     mockUseProductCategory.mockReturnValue(
-      buildQueryResult({ data: [{ slug: "beauty", name: "Beauty", url: "beauty" }] }),
+      buildQueryResult({
+        data: [{ slug: "beauty", name: "Beauty", url: "beauty" }],
+      }),
     );
     mockUseProductsByCategory.mockReturnValue(
       buildQueryResult({
-        data: { products: [createMockProduct({ id: 3, title: "Lipstick" })], total: 1 },
+        data: {
+          products: [createMockProduct({ id: 3, title: "Lipstick" })],
+          total: 1,
+        },
         isSuccess: true,
       }),
     );
@@ -138,7 +166,9 @@ describe("ProductList", () => {
 
     render(<ProductList />);
 
-    await user.click(screen.getByRole("button", { name: "Remove search filter" }));
+    await user.click(
+      screen.getByRole("button", { name: "Remove search filter" }),
+    );
 
     expect(setFilters).toHaveBeenCalledWith({ search: "" });
   });
@@ -154,13 +184,22 @@ describe("ProductList", () => {
 
     await user.click(screen.getByRole("button", { name: "Clear all" }));
 
-    expect(setFilters).toHaveBeenCalledWith({ search: "", category: "", sort: "featured" });
+    expect(setFilters).toHaveBeenCalledWith({
+      search: "",
+      category: "",
+      sort: "featured",
+      minPrice: null,
+      maxPrice: null,
+    });
   });
 
   it("changes the page through pagination", async () => {
     const user = userEvent.setup();
     mockUseProducts.mockReturnValue(
-      buildQueryResult({ data: { products: [createMockProduct()], total: 30 }, isSuccess: true }),
+      buildQueryResult({
+        data: { products: [createMockProduct()], total: 30 },
+        isSuccess: true,
+      }),
     );
 
     render(<ProductList />);
@@ -173,7 +212,9 @@ describe("ProductList", () => {
   it("selecting a category from the sidebar clears the search box", async () => {
     const user = userEvent.setup();
     mockUseProductCategory.mockReturnValue(
-      buildQueryResult({ data: [{ slug: "beauty", name: "Beauty", url: "beauty" }] }),
+      buildQueryResult({
+        data: [{ slug: "beauty", name: "Beauty", url: "beauty" }],
+      }),
     );
     mockUseProducts.mockReturnValue(
       buildQueryResult({ data: { products: [], total: 0 }, isSuccess: true }),
@@ -200,5 +241,140 @@ describe("ProductList", () => {
 
     expect(setFilters).toHaveBeenCalledWith({ search: "p", category: "" });
     jest.useRealTimers();
+  });
+});
+
+describe("ProductList price range", () => {
+  const cheap = createMockProduct({ id: 1, title: "Cheap", price: 10 });
+  const mid = createMockProduct({ id: 2, title: "Mid", price: 100 });
+  const pricey = createMockProduct({ id: 3, title: "Pricey", price: 500 });
+
+  const setupProducts = () => {
+    mockUseProducts.mockReturnValue(
+      buildQueryResult({
+        data: { products: [cheap, mid, pricey], total: 3 },
+        isSuccess: true,
+      }),
+    );
+  };
+
+  it("shows every product when no price range is set", () => {
+    setupProducts();
+
+    render(<ProductList />);
+
+    expect(screen.getByText("Cheap")).toBeInTheDocument();
+    expect(screen.getByText("Mid")).toBeInTheDocument();
+    expect(screen.getByText("Pricey")).toBeInTheDocument();
+  });
+
+  it("hides products below the minimum price", () => {
+    setupProducts();
+    setupFilters({ minPrice: 50 });
+
+    render(<ProductList />);
+
+    expect(screen.queryByText("Cheap")).not.toBeInTheDocument();
+    expect(screen.getByText("Mid")).toBeInTheDocument();
+    expect(screen.getByText("Pricey")).toBeInTheDocument();
+  });
+
+  it("hides products above the maximum price", () => {
+    setupProducts();
+    setupFilters({ maxPrice: 200 });
+
+    render(<ProductList />);
+
+    expect(screen.getByText("Cheap")).toBeInTheDocument();
+    expect(screen.getByText("Mid")).toBeInTheDocument();
+    expect(screen.queryByText("Pricey")).not.toBeInTheDocument();
+  });
+
+  it("keeps only products inside an inclusive min/max range", () => {
+    setupProducts();
+    setupFilters({ minPrice: 100, maxPrice: 500 });
+
+    render(<ProductList />);
+
+    expect(screen.queryByText("Cheap")).not.toBeInTheDocument();
+    expect(screen.getByText("Mid")).toBeInTheDocument();
+    expect(screen.getByText("Pricey")).toBeInTheDocument();
+  });
+
+  it("seeds the price inputs from the URL-backed filters", () => {
+    setupProducts();
+    setupFilters({ minPrice: 25, maxPrice: 75 });
+
+    render(<ProductList />);
+
+    expect(screen.getByLabelText("Minimum price")).toHaveValue("25");
+    expect(screen.getByLabelText("Maximum price")).toHaveValue("75");
+  });
+
+  it("reports how many of the fetched products match the range", () => {
+    setupProducts();
+    setupFilters({ minPrice: 50 });
+
+    render(<ProductList />);
+
+    expect(
+      screen.getByText("Showing 2 of 3 products in this price range"),
+    ).toBeInTheDocument();
+  });
+
+  it("shows a removable chip describing the active range", () => {
+    setupProducts();
+    setupFilters({ minPrice: 10, maxPrice: 500 });
+
+    render(<ProductList />);
+
+    expect(screen.getByText("Price:")).toBeInTheDocument();
+    expect(screen.getByText("$10.00 – $500.00")).toBeInTheDocument();
+  });
+
+  it("clears both bounds when the price chip is removed", async () => {
+    const user = userEvent.setup();
+    setupProducts();
+    setupFilters({ minPrice: 10, maxPrice: 500 });
+
+    render(<ProductList />);
+    await user.click(screen.getByRole("button", { name: /remove price/i }));
+
+    expect(setFilters).toHaveBeenCalledWith({ minPrice: null, maxPrice: null });
+  });
+
+  it("debounces typed price input before updating the filters", async () => {
+    jest.useFakeTimers();
+    const user = userEvent.setup({ delay: null });
+    setupProducts();
+
+    render(<ProductList />);
+    await user.type(screen.getByLabelText("Minimum price"), "50");
+
+    expect(setFilters).not.toHaveBeenCalled();
+
+    await act(async () => {
+      jest.advanceTimersByTime(400);
+    });
+
+    expect(setFilters).toHaveBeenCalledWith({ minPrice: 50, maxPrice: null });
+    jest.useRealTimers();
+  });
+
+  it("clears the price range along with the other filters", async () => {
+    const user = userEvent.setup();
+    setupProducts();
+    setupFilters({ minPrice: 10 });
+
+    render(<ProductList />);
+    await user.click(screen.getByRole("button", { name: "Clear all" }));
+
+    expect(setFilters).toHaveBeenCalledWith({
+      search: "",
+      category: "",
+      sort: "featured",
+      minPrice: null,
+      maxPrice: null,
+    });
   });
 });

@@ -18,7 +18,9 @@ describe("EmptyState", () => {
       />,
     );
 
-    expect(screen.getByText("Try a different search term.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Try a different search term."),
+    ).toBeInTheDocument();
   });
 
   it("omits the description when none is given", () => {

@@ -30,7 +30,12 @@ export const EmptyState = ({
       className,
     )}
   >
-    <span className={cn("flex h-14 w-14 items-center justify-center rounded-2xl", iconClasses[variant])}>
+    <span
+      className={cn(
+        "flex h-14 w-14 items-center justify-center rounded-2xl",
+        iconClasses[variant],
+      )}
+    >
       {icon}
     </span>
     <p className="text-lg font-semibold text-slate-900">{title}</p>

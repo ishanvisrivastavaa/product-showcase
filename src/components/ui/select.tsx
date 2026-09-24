@@ -107,7 +107,7 @@ export const Select = <T extends string | number>({
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={handleTriggerKeyDown}
         className={cn(
-          "w-full justify-between bg-slate-50 pl-3.5 pr-3 text-left font-medium",
+          "w-full justify-between bg-slate-50 pr-3 pl-3.5 text-left font-medium",
           open && "border-indigo-500 ring-2 ring-indigo-500/30",
         )}
       >
@@ -130,7 +130,7 @@ export const Select = <T extends string | number>({
           aria-label={ariaLabel}
           aria-activedescendant={`${listboxId}-${activeIndex}`}
           onKeyDown={handleListKeyDown}
-          className="absolute left-0 right-0 z-20 mt-1.5 max-h-72 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-slate-200/70 focus:outline-none"
+          className="absolute right-0 left-0 z-20 mt-1.5 max-h-72 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-slate-200/70 focus:outline-none"
         >
           {options.map((option, index) => {
             const isSelected = index === selectedIndex;

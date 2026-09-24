@@ -18,7 +18,7 @@ export const ProductSummary = ({
       <Badge variant="primary">{categoryName}</Badge>
       {product.brand ? <Badge variant="neutral">{product.brand}</Badge> : null}
     </div>
-    <h1 className="text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+    <h1 className="text-3xl leading-tight font-bold tracking-tight text-slate-900 sm:text-4xl">
       {product.title}
     </h1>
     <ProductRating

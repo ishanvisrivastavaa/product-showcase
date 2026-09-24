@@ -30,7 +30,9 @@ describe("Pagination", () => {
     render(<Pagination page={5} totalPages={5} onPageChange={jest.fn()} />);
 
     expect(screen.getByRole("button", { name: /next/i })).toBeDisabled();
-    expect(screen.getByRole("button", { name: /previous/i })).not.toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /previous/i }),
+    ).not.toBeDisabled();
   });
 
   it("calls onPageChange with page - 1 when Previous is clicked", async () => {

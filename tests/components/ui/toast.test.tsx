@@ -28,9 +28,10 @@ describe("Toaster", () => {
     render(<Toaster />);
 
     act(() => {
-      useToast
-        .getState()
-        .showToast({ message: "Item added", link: { href: "/cart", label: "View cart" } });
+      useToast.getState().showToast({
+        message: "Item added",
+        link: { href: "/cart", label: "View cart" },
+      });
     });
 
     expect(screen.getByRole("link", { name: "View cart" })).toHaveAttribute(
@@ -46,7 +47,9 @@ describe("Toaster", () => {
     act(() => {
       useToast.getState().showToast({ message: "Item added" });
     });
-    await user.click(screen.getByRole("button", { name: "Dismiss notification" }));
+    await user.click(
+      screen.getByRole("button", { name: "Dismiss notification" }),
+    );
 
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });

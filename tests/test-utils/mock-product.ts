@@ -1,6 +1,8 @@
 import type { Product } from "@/features/products/types/product.types";
 
-export const createMockProduct = (overrides: Partial<Product> = {}): Product => ({
+export const createMockProduct = (
+  overrides: Partial<Product> = {},
+): Product => ({
   id: 1,
   title: "Test Product",
   description: "A product used for testing.",

@@ -4,7 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { Tabs } from "@/components/ui/tabs";
 
 const items = [
-  { id: "description", label: "Description", content: <p>Description panel</p> },
+  {
+    id: "description",
+    label: "Description",
+    content: <p>Description panel</p>,
+  },
   { id: "specs", label: "Specifications", content: <p>Specs panel</p> },
   { id: "reviews", label: "Reviews", content: <p>Reviews panel</p> },
 ];

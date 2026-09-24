@@ -30,7 +30,9 @@ const createWrapper = () => {
     defaultOptions: { queries: { retry: false } },
   });
   return function Wrapper({ children }: { children: ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+    return (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
   };
 };
 

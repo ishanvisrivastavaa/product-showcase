@@ -44,7 +44,7 @@ export const ProductGallery = ({
         />
         {hasMultiple ? (
           <>
-            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+            <div className="absolute top-1/2 left-3 -translate-y-1/2">
               <Tooltip label="Previous image">
                 <Button
                   variant="secondary"
@@ -57,7 +57,7 @@ export const ProductGallery = ({
                 </Button>
               </Tooltip>
             </div>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="absolute top-1/2 right-3 -translate-y-1/2">
               <Tooltip label="Next image">
                 <Button
                   variant="secondary"
@@ -70,7 +70,7 @@ export const ProductGallery = ({
                 </Button>
               </Tooltip>
             </div>
-            <span className="absolute bottom-3 right-3 rounded-full bg-slate-900/70 px-2.5 py-1 text-xs font-medium text-white">
+            <span className="absolute right-3 bottom-3 rounded-full bg-slate-900/70 px-2.5 py-1 text-xs font-medium text-white">
               {activeIndex + 1} / {sourceImages.length}
             </span>
           </>

@@ -37,7 +37,7 @@ const CartLine = ({ item }: { item: CartItem }) => {
           <div className="min-w-0">
             <Link
               href={`/product/${item.id}`}
-              className="line-clamp-2 rounded font-semibold text-slate-900 hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="line-clamp-2 rounded font-semibold text-slate-900 hover:text-indigo-600 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
             >
               {item.title}
             </Link>

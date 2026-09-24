@@ -11,7 +11,9 @@ const categories: ProductCategory[] = [
   { slug: "furniture", name: "Furniture", url: "furniture" },
 ];
 
-const renderSidebar = (overrides: Partial<React.ComponentProps<typeof FilterSidebar>> = {}) => {
+const renderSidebar = (
+  overrides: Partial<React.ComponentProps<typeof FilterSidebar>> = {},
+) => {
   const props = {
     search: "",
     onSearchChange: jest.fn(),
@@ -19,6 +21,10 @@ const renderSidebar = (overrides: Partial<React.ComponentProps<typeof FilterSide
     onCategoryChange: jest.fn(),
     sort: "featured",
     onSortChange: jest.fn(),
+    minPrice: "",
+    onMinPriceChange: jest.fn(),
+    maxPrice: "",
+    onMaxPriceChange: jest.fn(),
     categories,
     categoriesLoading: false,
     ...overrides,
@@ -86,7 +92,9 @@ describe("FilterSidebar", () => {
   it("lets the user pick a different sort option", async () => {
     const user = userEvent.setup();
     const props = renderSidebar();
-    const priceAsc = SORT_OPTIONS.find((option) => option.value === "price-asc")!;
+    const priceAsc = SORT_OPTIONS.find(
+      (option) => option.value === "price-asc",
+    )!;
 
     await user.click(screen.getByRole("button", { name: "Sort products" }));
     await user.click(screen.getByRole("option", { name: priceAsc.label }));

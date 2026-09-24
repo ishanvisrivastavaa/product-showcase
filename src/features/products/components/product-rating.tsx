@@ -14,9 +14,7 @@ export const ProductRating = ({
   className,
 }: ProductRatingProps) => (
   <div className={cn("flex items-center gap-1.5", className)}>
-    <span className="sr-only">
-      Rating: {rating.toFixed(1)} out of 5
-    </span>
+    <span className="sr-only">Rating: {rating.toFixed(1)} out of 5</span>
     <span className="flex items-center gap-0.5" aria-hidden="true">
       {Array.from({ length: 5 }, (_, index) => (
         <StarIcon
@@ -32,7 +30,9 @@ export const ProductRating = ({
       {rating.toFixed(1)}
     </span>
     {typeof reviewCount === "number" ? (
-      <span className="text-xs text-slate-400" aria-hidden="true">({reviewCount})</span>
+      <span className="text-xs text-slate-400" aria-hidden="true">
+        ({reviewCount})
+      </span>
     ) : null}
   </div>
 );

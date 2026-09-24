@@ -26,11 +26,18 @@ describe("Breadcrumb", () => {
 
   it("renders the last item as plain text marked as the current page", () => {
     render(
-      <Breadcrumb items={[{ label: "Products", href: "/" }, { label: "Lipstick" }]} />,
+      <Breadcrumb
+        items={[{ label: "Products", href: "/" }, { label: "Lipstick" }]}
+      />,
     );
 
-    expect(screen.queryByRole("link", { name: "Lipstick" })).not.toBeInTheDocument();
-    expect(screen.getByText("Lipstick")).toHaveAttribute("aria-current", "page");
+    expect(
+      screen.queryByRole("link", { name: "Lipstick" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("Lipstick")).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 
   it("renders a single item without crashing", () => {

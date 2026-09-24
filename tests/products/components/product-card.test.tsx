@@ -12,16 +12,19 @@ beforeEach(() => {
 
 describe("ProductCard", () => {
   it("shows the title, brand, and a link to the product page", () => {
-    const product = createMockProduct({ id: 7, title: "Wireless Mouse", brand: "Logitech" });
+    const product = createMockProduct({
+      id: 7,
+      title: "Wireless Mouse",
+      brand: "Logitech",
+    });
 
     render(<ProductCard product={product} />);
 
     expect(screen.getByText("Wireless Mouse")).toBeInTheDocument();
     expect(screen.getByText("Logitech")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Wireless Mouse" })).toHaveAttribute(
-      "href",
-      "/product/7",
-    );
+    expect(
+      screen.getByRole("link", { name: "Wireless Mouse" }),
+    ).toHaveAttribute("href", "/product/7");
   });
 
   it("falls back to a formatted category label when there is no brand", () => {
@@ -33,7 +36,11 @@ describe("ProductCard", () => {
   });
 
   it("shows the plain price without a discount badge when not discounted", () => {
-    render(<ProductCard product={createMockProduct({ price: 50, discountPercentage: 0 })} />);
+    render(
+      <ProductCard
+        product={createMockProduct({ price: 50, discountPercentage: 0 })}
+      />,
+    );
 
     expect(screen.getByText("$50.00")).toBeInTheDocument();
     expect(screen.queryByText(/-\d+%/)).not.toBeInTheDocument();
@@ -41,7 +48,9 @@ describe("ProductCard", () => {
 
   it("shows the discounted price, original price, and a discount badge when discounted", () => {
     render(
-      <ProductCard product={createMockProduct({ price: 50, discountPercentage: 20 })} />,
+      <ProductCard
+        product={createMockProduct({ price: 50, discountPercentage: 20 })}
+      />,
     );
 
     expect(screen.getByText("$40.00")).toBeInTheDocument();
@@ -50,7 +59,11 @@ describe("ProductCard", () => {
   });
 
   it("shows the current availability status", () => {
-    render(<ProductCard product={createMockProduct({ availabilityStatus: "Low Stock" })} />);
+    render(
+      <ProductCard
+        product={createMockProduct({ availabilityStatus: "Low Stock" })}
+      />,
+    );
 
     expect(screen.getByText("Low Stock")).toBeInTheDocument();
   });
@@ -60,8 +73,13 @@ describe("ProductCard", () => {
     const product = createMockProduct({ id: 9, title: "Desk Lamp" });
 
     render(<ProductCard product={product} />);
-    await user.click(screen.getByRole("button", { name: "Add Desk Lamp to cart" }));
+    await user.click(
+      screen.getByRole("button", { name: "Add Desk Lamp to cart" }),
+    );
 
-    expect(useCartStore.getState().items[0]).toMatchObject({ id: 9, quantity: 1 });
+    expect(useCartStore.getState().items[0]).toMatchObject({
+      id: 9,
+      quantity: 1,
+    });
   });
 });
