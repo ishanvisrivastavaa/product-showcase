@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { Toaster } from "@/components/ui/toast";
-import { QueryProvider, ScrollToTop, StoreHydrator } from "@/providers";
+import { QueryProvider, StoreHydrator } from "@/providers";
 import { siteConfig } from "@/config/site.config";
 
 import "./globals.css";
@@ -33,7 +33,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-slate-50 text-slate-900">
         <QueryProvider>
           <StoreHydrator />
-          <ScrollToTop />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:shadow-lg focus:outline-none"

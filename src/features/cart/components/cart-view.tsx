@@ -8,8 +8,10 @@ import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ShoppingBagIcon, XIcon } from "@/components/ui/icons";
 import { QuantitySelector } from "@/components/ui/quantity-selector";
+import { Skeleton } from "@/components/ui/skeleton";
 import { formatPrice } from "@/lib/format/number";
 
+import { useCartHydrated } from "../hooks/use-cart-hydrated";
 import {
   selectCartCount,
   selectCartSubtotal,
@@ -72,10 +74,33 @@ const CartLine = ({ item }: { item: CartItem }) => {
 };
 
 export const CartView = () => {
+  const hydrated = useCartHydrated();
   const items = useCartStore((state) => state.items);
   const count = useCartStore(selectCartCount);
   const subtotal = useCartStore(selectCartSubtotal);
   const clearCart = useCartStore((state) => state.clearCart);
+
+  if (!hydrated) {
+    return (
+      <div
+        className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]"
+        data-testid="cart-skeleton"
+      >
+        <Card className="p-5 sm:p-6">
+          <div className="space-y-4">
+            <Skeleton className="h-24 w-full rounded-xl" />
+            <Skeleton className="h-24 w-full rounded-xl" />
+          </div>
+        </Card>
+        <Card className="flex h-fit flex-col gap-4 p-6">
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-2/3" />
+          <Skeleton className="h-10 w-full" />
+        </Card>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

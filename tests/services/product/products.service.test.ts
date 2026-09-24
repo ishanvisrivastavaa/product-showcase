@@ -24,16 +24,13 @@ describe("products.service", () => {
 
     expect(mockGet).toHaveBeenCalledWith("/products", {
       params: { skip: 0, limit: 12 },
-      unwrapResponse: false,
     });
   });
 
   it("getProduct calls the detail endpoint for the given id", async () => {
     await getProduct("42");
 
-    expect(mockGet).toHaveBeenCalledWith("/products/42", {
-      unwrapResponse: false,
-    });
+    expect(mockGet).toHaveBeenCalledWith("/products/42");
   });
 
   it("searchProducts calls the search endpoint with the query and params", async () => {
@@ -41,16 +38,13 @@ describe("products.service", () => {
 
     expect(mockGet).toHaveBeenCalledWith("/products/search", {
       params: { q: "phone", limit: 12 },
-      unwrapResponse: false,
     });
   });
 
   it("getProductCategories calls the categories endpoint", async () => {
     await getProductCategories();
 
-    expect(mockGet).toHaveBeenCalledWith("/products/categories", {
-      unwrapResponse: false,
-    });
+    expect(mockGet).toHaveBeenCalledWith("/products/categories");
   });
 
   it("getProductsByCategory calls the category endpoint with only the query params", async () => {
@@ -64,7 +58,6 @@ describe("products.service", () => {
 
     expect(mockGet).toHaveBeenCalledWith("/products/category/beauty", {
       params: { skip: 0, limit: 12, sortBy: "price", order: "asc" },
-      unwrapResponse: false,
     });
   });
 });

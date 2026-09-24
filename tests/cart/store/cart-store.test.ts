@@ -6,6 +6,7 @@ import {
   selectIsProductInCart,
   useCartStore,
 } from "@/features/cart/store/cart-store";
+import type { CartState } from "@/features/cart/store/cart-store";
 
 const resetCart = () => useCartStore.setState({ items: [] });
 
@@ -213,6 +214,94 @@ describe("useCartStore", () => {
       useCartStore.getState().removeItem(1);
 
       expect(selectIsProductInCart(1)(useCartStore.getState())).toBe(false);
+    });
+  });
+
+  describe("clampQuantity and zero stock", () => {
+    it("rejects adding a product with zero stock", () => {
+      const outOfStock = createMockProduct({ id: 99, stock: 0 });
+      useCartStore.getState().addItem(outOfStock, 1);
+
+      expect(useCartStore.getState().items).toHaveLength(0);
+    });
+
+    it("rejects adding a product with negative stock", () => {
+      const negativeStock = createMockProduct({ id: 99, stock: -2 });
+      useCartStore.getState().addItem(negativeStock, 1);
+
+      expect(useCartStore.getState().items).toHaveLength(0);
+    });
+  });
+
+  describe("persist merge and migration", () => {
+    const options = useCartStore.persist.getOptions();
+
+    it("has persist version 1", () => {
+      expect(options.version).toBe(1);
+    });
+
+    it("safely merges malformed persisted states to empty items", () => {
+      const currentState = useCartStore.getState();
+      const merge = options.merge!;
+
+      expect(merge(null, currentState)).toEqual(
+        expect.objectContaining({ items: [] }),
+      );
+      expect(merge("invalid-json", currentState)).toEqual(
+        expect.objectContaining({ items: [] }),
+      );
+      expect(merge({ items: "not-an-array" }, currentState)).toEqual(
+        expect.objectContaining({ items: [] }),
+      );
+    });
+
+    it("filters out invalid/corrupted cart items on merge", () => {
+      const currentState = useCartStore.getState();
+      const merge = options.merge!;
+
+      const result = merge(
+        {
+          items: [
+            {
+              id: 1,
+              title: "Valid",
+              thumbnail: "img.jpg",
+              price: 10,
+              stock: 5,
+              quantity: 1,
+            },
+            { id: "invalid-id", title: "Bad Item" },
+            null,
+            { id: 2, title: "Negative Price", price: -10, stock: 5, quantity: 1 },
+            { id: 3, title: "Zero Qty", price: 10, stock: 5, quantity: 0 },
+          ],
+        },
+        currentState,
+      );
+
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].id).toBe(1);
+    });
+
+    it("migrates from version 0 by filtering valid items", () => {
+      const migrate = options.migrate!;
+      const stateV0 = {
+        items: [
+          {
+            id: 1,
+            title: "Migrated Item",
+            thumbnail: "img.jpg",
+            price: 25,
+            stock: 10,
+            quantity: 2,
+          },
+          { id: "corrupt" },
+        ],
+      };
+
+      const migrated = migrate(stateV0, 0) as CartState;
+      expect(migrated.items).toHaveLength(1);
+      expect(migrated.items[0].title).toBe("Migrated Item");
     });
   });
 });

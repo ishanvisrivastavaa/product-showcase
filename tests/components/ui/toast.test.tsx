@@ -70,4 +70,33 @@ describe("Toaster", () => {
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
     jest.useRealTimers();
   });
+
+  it("pauses auto-dismissal when hovered", async () => {
+    jest.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    render(<Toaster />);
+
+    act(() => {
+      useToast.getState().showToast({ message: "Hovered toast" });
+    });
+
+    const statusEl = screen.getByRole("status");
+    await user.hover(statusEl);
+
+    act(() => {
+      jest.advanceTimersByTime(4000);
+    });
+
+    // Still visible because hover paused timer
+    expect(screen.getByRole("status")).toBeInTheDocument();
+
+    await user.unhover(statusEl);
+
+    act(() => {
+      jest.advanceTimersByTime(3000);
+    });
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    jest.useRealTimers();
+  });
 });

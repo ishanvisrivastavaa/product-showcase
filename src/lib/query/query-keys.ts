@@ -4,23 +4,25 @@ import type {
   SearchProductsParams,
 } from "@/features/products/types/product.types";
 
+const all = ["products"] as const;
+
 export const queryKeys = {
   products: {
-    all: ["products"] as const,
+    all,
 
     list: (params?: GetProductsParams) =>
-      ["products", "list", params ?? {}] as const,
+      [...all, "list", params ?? {}] as const,
 
-    detail: (id: string) => ["products", "detail", id] as const,
+    detail: (id: string) => [...all, "detail", id] as const,
 
     search: (query: string, params?: Omit<SearchProductsParams, "q">) =>
-      ["products", "search", query, params ?? {}] as const,
+      [...all, "search", query, params ?? {}] as const,
 
-    categories: ["products", "categories"] as const,
+    categories: [...all, "categories"] as const,
 
     byCategory: (
       category: string,
       params?: Omit<GetProductsByCategoryParams, "category">,
-    ) => ["products", "category", category, params ?? {}] as const,
+    ) => [...all, "category", category, params ?? {}] as const,
   },
 };

@@ -74,17 +74,17 @@ src/
       utils/              Small pure helpers (e.g. stock-availability status)
     cart/                Everything related to the shopping cart
       components/         Cart page UI, add-to-cart button, cart badge
-      hooks/              useAddToCart — adds an item and shows a toast
+      hooks/              useAddToCart — adds an item and shows a toast; useCartHydrated — tracks hydration
       store/              Zustand cart store (state + actions + selectors)
       types/              Cart item type
-  hooks/                 Shared, non-feature-specific hooks (React Query hooks, useDebounce)
+  hooks/                 Shared, non-feature-specific hooks (React Query hooks, useDebounce, useDebouncedUrlParam)
   lib/
     api/                 Axios client, API error type, endpoint path builders
     query/                React Query client setup and query-key builders
     format/               Formatting helpers (price, text)
     utils/                 Small generic utilities (the cn() className helper)
   providers/             App-wide providers mounted in the root layout (React Query, cart
-                          hydration, scroll-to-top on navigation)
+                          hydration)
   services/              Functions that call the API client for a specific resource (products)
 tests/                   All automated tests, mirroring the src/ structure (see below)
 public/                 Static assets
@@ -110,7 +110,7 @@ tests/
 
 | Library                         | Purpose                                                                                                        |
 | ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Next.js** (App Router)        | Framework: routing, layouts, loading/error UI, dynamic imports                                                 |
+| **Next.js** (App Router)        | Framework: routing, layouts, loading/error UI, server prefetching                                              |
 | **React**                       | UI library                                                                                                     |
 | **TypeScript**                  | Static typing across the whole codebase                                                                        |
 | **Tailwind CSS**                | Utility-first styling                                                                                          |
@@ -125,14 +125,14 @@ tests/
 
 ## Architecture
 
-**Pages are thin.** Files under `src/app` mostly just lazy-load a feature component (via `next/dynamic`, with a skeleton `loading` fallback) and render it inside a page-level layout wrapper. The actual UI and logic live in `src/features`.
+**Pages are thin.** Server components under `src/app` prefetch initial data using `getQueryClient()` and `dehydrate()`, wrap client feature components with `Suspense` skeletons, and handle dynamic route params / metadata. The actual UI and logic live in `src/features`.
 
 **Feature-based organization.** Each feature under `src/features` (`products`, `cart`) owns its own `components/`, `hooks/`, `types/`, and `utils/` (and, for `cart`, a `store/`), and exposes its public API through a single `index.ts` barrel file. Other code imports from `@/features/products` or `@/features/cart`, not from internal file paths.
 
 **Two kinds of state:**
 
 - **Server state** (product/category data from the API) is managed by **TanStack React Query**. Hooks in `src/hooks/product/use-product.ts` (e.g. `useProducts`, `useProductDetail`, `useSearchProducts`) wrap `useQuery` and call functions from the services layer. Query keys are centralized in `src/lib/query/query-keys.ts` so cache entries stay consistent.
-- **Client state** (the shopping cart) is managed by **Zustand**. The store in `src/features/cart/store/cart-store.ts` holds cart items and exposes actions (`addItem`, `updateQuantity`, `removeItem`, `clearCart`) and selectors (`selectCartCount`, `selectCartSubtotal`, `selectIsProductInCart`). It's persisted to `localStorage` and rehydrated on the client via `StoreHydrator` in `src/providers`.
+- **Client state** (the shopping cart) is managed by **Zustand**. The store in `src/features/cart/store/cart-store.ts` holds cart items and exposes actions (`addItem`, `updateQuantity`, `removeItem`, `clearCart`) and selectors (`selectCartCount`, `selectCartSubtotal`, `selectIsProductInCart`). It is versioned, validates persisted items, and hydrates safely via `StoreHydrator` and `useCartHydrated`.
 
 **Filters live in the URL.** The product list's search, category, and sort filters are read from and written to the URL's query string via `useProductFilters` (`src/features/products/hooks`), so a filtered view can be bookmarked or shared as a link, and the browser's back/forward buttons work as expected.
 

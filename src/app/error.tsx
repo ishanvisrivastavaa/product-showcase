@@ -15,8 +15,13 @@ const ErrorPage = ({ error, reset }: ErrorPageProps) => (
     </span>
     <h1 className="text-2xl font-bold text-slate-900">Something went wrong</h1>
     <p className="max-w-md text-sm text-slate-500">
-      {error.message || "An unexpected error occurred while loading this page."}
+      An unexpected error occurred while loading this page. Please try again.
     </p>
+    {error.digest ? (
+      <p className="font-mono text-xs text-slate-400">
+        Error ID: {error.digest}
+      </p>
+    ) : null}
     <Button onClick={reset} className="mt-2">
       Try again
     </Button>

@@ -3,8 +3,6 @@ export interface ProductFilterState {
   category: string;
   sort: string;
   page: number;
-  minPrice: number | null;
-  maxPrice: number | null;
 }
 
 export interface ActiveFilter {

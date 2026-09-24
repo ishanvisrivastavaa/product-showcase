@@ -75,6 +75,14 @@ describe("useProductDetail", () => {
 
     expect(getProduct).not.toHaveBeenCalled();
   });
+
+  it("prevents caller from enabling the query when id is empty", () => {
+    renderHook(() => useProductDetail("", { enabled: true }), {
+      wrapper: createWrapper(),
+    });
+
+    expect(getProduct).not.toHaveBeenCalled();
+  });
 });
 
 describe("useSearchProducts", () => {
@@ -96,6 +104,14 @@ describe("useSearchProducts", () => {
 
   it("does not search when the query is blank", () => {
     renderHook(() => useSearchProducts("   "), { wrapper: createWrapper() });
+
+    expect(searchProducts).not.toHaveBeenCalled();
+  });
+
+  it("prevents caller from enabling the query when query is blank", () => {
+    renderHook(() => useSearchProducts("   ", undefined, { enabled: true }), {
+      wrapper: createWrapper(),
+    });
 
     expect(searchProducts).not.toHaveBeenCalled();
   });
@@ -133,6 +149,17 @@ describe("useProductsByCategory", () => {
 
   it("does not fetch when the category is empty", () => {
     renderHook(() => useProductsByCategory(""), { wrapper: createWrapper() });
+
+    expect(getProductsByCategory).not.toHaveBeenCalled();
+  });
+
+  it("prevents caller from enabling the query when category is empty", () => {
+    renderHook(
+      () => useProductsByCategory("", undefined, { enabled: true }),
+      {
+        wrapper: createWrapper(),
+      },
+    );
 
     expect(getProductsByCategory).not.toHaveBeenCalled();
   });

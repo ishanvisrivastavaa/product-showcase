@@ -11,7 +11,7 @@ jest.mock("axios", () => {
 
 import axios from "axios";
 
-import { apiClient } from "@/lib/api/client";
+import { apiClient, getErrorMessageByStatus } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/errors";
 
 // The same instance client.ts received from its module-level axios.create() call.
@@ -28,20 +28,28 @@ describe("apiClient", () => {
     expect(mockUse).toHaveBeenCalledTimes(1);
   });
 
-  it("maps a failed request into an ApiError with its status and message", async () => {
+  it("maps status codes to friendly user messages in interceptor", async () => {
     const [, onRejected] = mockUse.mock.calls[0];
-    const axiosError = Object.assign(new Error("Not Found"), {
+    const axios404 = {
       response: { status: 404 },
-    });
+    };
 
-    await expect(onRejected(axiosError)).rejects.toMatchObject({
-      message: "Not Found",
+    await expect(onRejected(axios404)).rejects.toMatchObject({
+      message: "The requested resource could not be found.",
       status: 404,
     });
-    await expect(onRejected(axiosError)).rejects.toBeInstanceOf(ApiError);
+    await expect(onRejected(axios404)).rejects.toBeInstanceOf(ApiError);
+
+    const axios500 = {
+      response: { status: 500 },
+    };
+    await expect(onRejected(axios500)).rejects.toMatchObject({
+      message: "A server error occurred. Please try again later.",
+      status: 500,
+    });
   });
 
-  it("falls back to a generic message and status 0 when the error is not a real Error", async () => {
+  it("falls back to a generic message and status 0 when status is missing", async () => {
     const [, onRejected] = mockUse.mock.calls[0];
 
     await expect(onRejected({})).rejects.toMatchObject({
@@ -57,18 +65,18 @@ describe("apiClient", () => {
     expect(onFulfilled(response)).toBe(response);
   });
 
-  it("returns the raw response body when unwrapResponse is false", async () => {
+  it("returns the raw response body by default", async () => {
     mockGet.mockResolvedValue({ data: { products: [], total: 0 } });
 
-    const result = await apiClient.get("/products", { unwrapResponse: false });
+    const result = await apiClient.get("/products");
 
     expect(result).toEqual({ products: [], total: 0 });
   });
 
-  it("unwraps the `data` envelope by default", async () => {
+  it("unwraps the `data` envelope when unwrapResponse is true", async () => {
     mockGet.mockResolvedValue({ data: { data: { id: 1 } } });
 
-    const result = await apiClient.get("/products/1");
+    const result = await apiClient.get("/products/1", { unwrapResponse: true });
 
     expect(result).toEqual({ id: 1 });
   });
@@ -81,5 +89,15 @@ describe("apiClient", () => {
     expect(mockGet).toHaveBeenCalledWith("/products", {
       params: { q: "phone" },
     });
+  });
+
+  it("maps known HTTP statuses to descriptive messages", () => {
+    expect(getErrorMessageByStatus(400)).toContain("invalid");
+    expect(getErrorMessageByStatus(401)).toContain("authorized");
+    expect(getErrorMessageByStatus(403)).toContain("forbidden");
+    expect(getErrorMessageByStatus(404)).toContain("could not be found");
+    expect(getErrorMessageByStatus(429)).toContain("Too many requests");
+    expect(getErrorMessageByStatus(500)).toContain("server error");
+    expect(getErrorMessageByStatus(0)).toBe("An unexpected error occurred.");
   });
 });

@@ -27,8 +27,9 @@ const seedCart = () => {
   });
 };
 
-beforeEach(() => {
+beforeEach(async () => {
   useCartStore.setState({ items: [] });
+  await useCartStore.persist.rehydrate();
 });
 
 describe("CartView", () => {
@@ -94,5 +95,18 @@ describe("CartView", () => {
     await user.click(screen.getByRole("button", { name: "Clear cart" }));
 
     expect(useCartStore.getState().items).toEqual([]);
+  });
+
+  it("renders a skeleton while hydration is pending", () => {
+    const hasHydratedSpy = jest
+      .spyOn(useCartStore.persist, "hasHydrated")
+      .mockReturnValue(false);
+
+    render(<CartView />);
+
+    expect(screen.getByTestId("cart-skeleton")).toBeInTheDocument();
+    expect(screen.queryByText("Your cart is empty")).not.toBeInTheDocument();
+
+    hasHydratedSpy.mockRestore();
   });
 });

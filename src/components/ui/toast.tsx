@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { create } from "zustand";
 
@@ -27,22 +27,25 @@ export const useToast = create<ToastState>((set) => ({
 
 export const Toaster = () => {
   const { toast, hideToast } = useToast();
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (!toast) return;
+    if (!toast || isPaused) return;
     const timer = setTimeout(hideToast, 3000);
     return () => clearTimeout(timer);
-  }, [toast, hideToast]);
+  }, [toast, isPaused, hideToast]);
 
   return (
-    <div
-      aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 sm:bottom-6 sm:justify-end sm:px-6"
-    >
+    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 sm:bottom-6 sm:justify-end sm:px-6">
       {toast ? (
         <div
           key={toast.id}
           role="status"
+          aria-live="polite"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onFocus={() => setIsPaused(true)}
+          onBlur={() => setIsPaused(false)}
           className="pointer-events-auto flex max-w-sm items-center gap-3 rounded-xl bg-slate-900 py-3 pr-2 pl-4 text-sm text-white shadow-xl"
         >
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">

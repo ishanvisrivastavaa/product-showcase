@@ -39,11 +39,12 @@ export const useProductDetail = (
   id: string,
   options?: QueryOptions<Product>,
 ) => {
+  const { enabled = true, ...rest } = options ?? {};
   return useQuery<Product, ApiError>({
     queryKey: queryKeys.products.detail(id),
     queryFn: () => getProduct(id),
-    enabled: id.length > 0,
-    ...options,
+    enabled: Boolean(enabled) && id.length > 0,
+    ...rest,
   });
 };
 
@@ -52,11 +53,12 @@ export const useSearchProducts = (
   params?: Omit<SearchProductsParams, "q">,
   options?: QueryOptions<ProductsResponse>,
 ) => {
+  const { enabled = true, ...rest } = options ?? {};
   return useQuery<ProductsResponse, ApiError>({
     queryKey: queryKeys.products.search(query, params),
     queryFn: () => searchProducts({ q: query, ...params }),
-    enabled: query.trim().length > 0,
-    ...options,
+    enabled: Boolean(enabled) && query.trim().length > 0,
+    ...rest,
   });
 };
 
@@ -75,10 +77,11 @@ export const useProductsByCategory = (
   params?: Omit<GetProductsByCategoryParams, "category">,
   options?: QueryOptions<ProductsResponse>,
 ) => {
+  const { enabled = true, ...rest } = options ?? {};
   return useQuery<ProductsResponse, ApiError>({
     queryKey: queryKeys.products.byCategory(category, params),
     queryFn: () => getProductsByCategory({ category, ...params }),
-    enabled: category.length > 0,
-    ...options,
+    enabled: Boolean(enabled) && category.length > 0,
+    ...rest,
   });
 };

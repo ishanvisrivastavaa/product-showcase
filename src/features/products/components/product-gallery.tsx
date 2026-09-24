@@ -81,7 +81,7 @@ export const ProductGallery = ({
         <div className="flex gap-3 overflow-x-auto pb-1">
           {sourceImages.map((image, index) => (
             <Button
-              key={image}
+              key={`${index}-${image}`}
               variant="ghost"
               onClick={() => setActiveIndex(index)}
               aria-label={`View image ${index + 1}`}

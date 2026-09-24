@@ -12,31 +12,21 @@ import type {
 export const getProducts = async (
   params?: GetProductsParams,
 ): Promise<ProductsResponse> => {
-  return apiClient.get<ProductsResponse>(endpoints.products.list, {
-    params,
-    unwrapResponse: false,
-  });
+  return apiClient.get<ProductsResponse>(endpoints.products.list, { params });
 };
 
 export const getProduct = async (id: string): Promise<Product> => {
-  return apiClient.get<Product>(endpoints.products.detail(id), {
-    unwrapResponse: false,
-  });
+  return apiClient.get<Product>(endpoints.products.detail(id));
 };
 
 export const searchProducts = async (
   params: SearchProductsParams,
 ): Promise<ProductsResponse> => {
-  return apiClient.get<ProductsResponse>(endpoints.products.search, {
-    params,
-    unwrapResponse: false,
-  });
+  return apiClient.get<ProductsResponse>(endpoints.products.search, { params });
 };
 
 export const getProductCategories = async (): Promise<ProductCategory[]> => {
-  return apiClient.get<ProductCategory[]>(endpoints.products.categories, {
-    unwrapResponse: false,
-  });
+  return apiClient.get<ProductCategory[]>(endpoints.products.categories);
 };
 
 export const getProductsByCategory = async (
@@ -51,7 +41,6 @@ export const getProductsByCategory = async (
         sortBy: params.sortBy,
         order: params.order,
       },
-      unwrapResponse: false,
     },
   );
 };

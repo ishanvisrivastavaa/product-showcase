@@ -30,8 +30,6 @@ describe("useProductFilters", () => {
       category: "",
       sort: "featured",
       page: 1,
-      minPrice: null,
-      maxPrice: null,
     });
   });
 
@@ -47,8 +45,6 @@ describe("useProductFilters", () => {
       category: "electronics",
       sort: "price-asc",
       page: 3,
-      minPrice: null,
-      maxPrice: null,
     });
   });
 
@@ -134,88 +130,29 @@ describe("useProductFilters", () => {
       behavior: "smooth",
     });
   });
-});
 
-describe("useProductFilters price range", () => {
-  it("defaults min and max price to null when absent from the URL", () => {
-    const { result } = renderHook(() => useProductFilters());
+  it("validates category against allowed slugs list", () => {
+    mockNav.searchParams = new URLSearchParams("category=unknown-category");
+    const { result } = renderHook(() =>
+      useProductFilters(["beauty", "fragrances"]),
+    );
 
-    expect(result.current.filters.minPrice).toBeNull();
-    expect(result.current.filters.maxPrice).toBeNull();
+    expect(result.current.filters.category).toBe("");
   });
 
-  it("reads min and max price from the URL", () => {
-    mockNav.searchParams = new URLSearchParams("minPrice=10&maxPrice=99.5");
+  it("accepts category when present in allowed slugs list", () => {
+    mockNav.searchParams = new URLSearchParams("category=beauty");
+    const { result } = renderHook(() =>
+      useProductFilters(["beauty", "fragrances"]),
+    );
 
-    const { result } = renderHook(() => useProductFilters());
-
-    expect(result.current.filters.minPrice).toBe(10);
-    expect(result.current.filters.maxPrice).toBe(99.5);
+    expect(result.current.filters.category).toBe("beauty");
   });
 
-  it("ignores non-numeric and negative price params", () => {
-    mockNav.searchParams = new URLSearchParams("minPrice=abc&maxPrice=-5");
-
+  it("rejects malformed category slugs with special characters", () => {
+    mockNav.searchParams = new URLSearchParams("category=invalid/slug<script>");
     const { result } = renderHook(() => useProductFilters());
 
-    expect(result.current.filters.minPrice).toBeNull();
-    expect(result.current.filters.maxPrice).toBeNull();
-  });
-
-  it("swaps an inverted range so min is never above max", () => {
-    mockNav.searchParams = new URLSearchParams("minPrice=200&maxPrice=50");
-
-    const { result } = renderHook(() => useProductFilters());
-
-    expect(result.current.filters.minPrice).toBe(50);
-    expect(result.current.filters.maxPrice).toBe(200);
-  });
-
-  it("writes min and max price to the query string", () => {
-    const { result } = renderHook(() => useProductFilters());
-
-    act(() => {
-      result.current.setFilters({ minPrice: 10, maxPrice: 250 });
-    });
-
-    expect(mockReplace).toHaveBeenCalledWith("/?minPrice=10&maxPrice=250", {
-      scroll: false,
-    });
-  });
-
-  it("writes only the bound that is set", () => {
-    const { result } = renderHook(() => useProductFilters());
-
-    act(() => {
-      result.current.setFilters({ maxPrice: 50 });
-    });
-
-    expect(mockReplace).toHaveBeenCalledWith("/?maxPrice=50", {
-      scroll: false,
-    });
-  });
-
-  it("drops the price params when the range is cleared", () => {
-    mockNav.searchParams = new URLSearchParams("minPrice=10&maxPrice=250");
-    const { result } = renderHook(() => useProductFilters());
-
-    act(() => {
-      result.current.setFilters({ minPrice: null, maxPrice: null });
-    });
-
-    expect(mockReplace).toHaveBeenCalledWith("/", { scroll: false });
-  });
-
-  it("resets the page to 1 when the price range changes", () => {
-    mockNav.searchParams = new URLSearchParams("page=4");
-    const { result } = renderHook(() => useProductFilters());
-
-    act(() => {
-      result.current.setFilters({ minPrice: 20 });
-    });
-
-    expect(mockReplace).toHaveBeenCalledWith("/?minPrice=20", {
-      scroll: false,
-    });
+    expect(result.current.filters.category).toBe("");
   });
 });

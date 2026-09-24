@@ -7,4 +7,4 @@ export const formatPrice = (value: number): string =>
 export const getDiscountedPrice = (
   price: number,
   discountPercentage: number,
-): number => price * (1 - discountPercentage / 100);
+): number => Math.round(price * (1 - discountPercentage / 100) * 100) / 100;

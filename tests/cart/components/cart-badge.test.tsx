@@ -3,8 +3,9 @@ import { render, screen } from "@testing-library/react";
 import { useCartStore } from "@/features/cart/store/cart-store";
 import { CartBadge } from "@/features/cart/components/cart-badge";
 
-beforeEach(() => {
+beforeEach(async () => {
   useCartStore.setState({ items: [] });
+  await useCartStore.persist.rehydrate();
 });
 
 describe("CartBadge", () => {
@@ -68,5 +69,26 @@ describe("CartBadge", () => {
     render(<CartBadge />);
 
     expect(screen.getByText("99+")).toBeInTheDocument();
+  });
+
+  it("gates count and suppresses bubble before hydration", () => {
+    const hasHydratedSpy = jest
+      .spyOn(useCartStore.persist, "hasHydrated")
+      .mockReturnValue(false);
+
+    useCartStore.setState({
+      items: [
+        { id: 1, title: "A", thumbnail: "", price: 10, stock: 5, quantity: 2 },
+      ],
+    });
+
+    render(<CartBadge />);
+
+    expect(screen.queryByText("2")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Cart, 0 items" }),
+    ).toBeInTheDocument();
+
+    hasHydratedSpy.mockRestore();
   });
 });

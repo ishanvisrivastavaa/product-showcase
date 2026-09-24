@@ -46,7 +46,15 @@ export const AddToCartButton = ({
         addToCart(product, quantity);
         setJustAdded(true);
       }}
-      aria-label={compact ? `Add ${product.title} to cart` : undefined}
+      aria-label={
+        compact
+          ? inStock
+            ? showAdded
+              ? `Added ${product.title} to cart`
+              : `Add ${product.title} to cart`
+            : `${product.title} is sold out`
+          : undefined
+      }
     >
       {showAdded ? (
         <CheckIcon className={compact ? "h-3.5 w-3.5" : "h-4 w-4"} />
