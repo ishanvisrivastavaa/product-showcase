@@ -49,18 +49,34 @@ export const useCartStore = create<CartState>()(
           const clamped = clampQuantity(quantity, product.stock);
           if (clamped <= 0) return state;
 
+          const itemPrice = getDiscountedPrice(
+            product.price,
+            product.discountPercentage,
+          );
+
+          const currentTotal = state.items.reduce(
+            (sum, item) => sum + item.price * item.quantity, 0
+          );
+
           const existing = state.items.find((item) => item.id === product.id);
+
+          const additionalQuantity = existing
+            ? clampQuantity(existing.quantity + quantity, existing.stock) - existing.quantity
+            : clamped;
+
+          if (currentTotal + itemPrice * additionalQuantity > 500) return state;
+
           if (existing) {
             return {
               items: state.items.map((item) =>
                 item.id === product.id
                   ? {
-                      ...item,
-                      quantity: clampQuantity(
-                        item.quantity + quantity,
-                        item.stock,
-                      ),
-                    }
+                    ...item,
+                    quantity: clampQuantity(
+                      item.quantity + quantity,
+                      item.stock,
+                    ),
+                  }
                   : item,
               ),
             };
@@ -69,10 +85,7 @@ export const useCartStore = create<CartState>()(
             id: product.id,
             title: product.title,
             thumbnail: product.thumbnail,
-            price: getDiscountedPrice(
-              product.price,
-              product.discountPercentage,
-            ),
+            price: itemPrice,
             stock: product.stock,
             quantity: clamped,
           };
@@ -84,6 +97,13 @@ export const useCartStore = create<CartState>()(
             .map((item) => {
               if (item.id !== id) return item;
               const nextQuantity = clampQuantity(quantity, item.stock);
+
+              const otherTotal = state.items
+                .filter((i) => i.id !== id)
+                .reduce((sum, i) => sum + i.price * i.quantity, 0)
+
+              if (otherTotal + item.price * nextQuantity > 500) return true
+
               return nextQuantity > 0
                 ? { ...item, quantity: nextQuantity }
                 : null;

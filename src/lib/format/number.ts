@@ -1,7 +1,7 @@
 export const formatPrice = (value: number): string =>
-  value.toLocaleString("en-US", {
+  value?.toLocaleString("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
   });
 
 export const getDiscountedPrice = (
